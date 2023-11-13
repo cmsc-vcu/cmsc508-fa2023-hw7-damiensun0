@@ -16,8 +16,14 @@
 # Section 1
 # Drops all tables.  This section should be amended as new tables are added.
 
+SET AUTOCOMMIT=1;
+
 SET FOREIGN_KEY_CHECKS=0;
+drop table if exists peopleroles;
+drop table if exists peopleskills;
 DROP TABLE IF EXISTS people;
+drop table if exists skills;
+drop table if exists roles;
 # ... 
 SET FOREIGN_KEY_CHECKS=1;
 
@@ -28,12 +34,34 @@ SET FOREIGN_KEY_CHECKS=1;
 # time committment offers some sense of how much time was required (or will be required) to gain the skill.
 # You can assign the skill descriptions.  Please be creative!
 
+create table skills (
+    skills_id int not null,
+    skills_name varchar(255) not null,
+    skills_description varchar(255) not null default 'default description',
+    skills_tag varchar(255) not null,
+    skills_url varchar(255),
+    skills_time_commitment int,
+    primary key(skills_id)
+);
+
 
 # Section 3
 # Populate skills
 # Populates the skills table with eight skills, their tag fields must exactly contain “Skill 1”, “Skill 2”, etc.
 # You can assign skill names.  Please be creative!
 
+insert into skills (skills_id, skills_name, skills_tag) values
+    (1, 'rock climbing', 'Skill 1'),
+    (2, 'parkour', 'Skill 2'),
+    (3, 'gaming', 'Skill 3'),
+    (4, 'bowling', 'Skill 4'),
+    (5, 'hunting', 'Skill 5'),
+    (6, 'basketball', 'Skill 6'),
+    (7, 'cooking', 'Skill 7'),
+    (8, 'coding', 'Skill 8');
+
+
+SELECT * from skills;
 
 # Section 4
 # Create people( id,first_name, last_name, email, linkedin_url, headshot_url, discord_handle, brief_bio, date_joined)
@@ -41,8 +69,14 @@ SET FOREIGN_KEY_CHECKS=1;
 # All other fields can default to NULL.
 
 CREATE TABLE people (
-    people_id int,
-    people_last_name varchar(256) NOT NULL,
+    people_id int not null,
+    people_last_name varchar(255) NOT NULL,
+    email varchar(255) not null default 'default@email',
+    linkedin_url varchar(255),
+    headshot_url varchar(255),
+    discord_handle varchar(255),
+    brief_bio varchar(255),
+    date_joined varchar(255) not null,
     PRIMARY KEY (people_id)
 );
 
@@ -51,13 +85,35 @@ CREATE TABLE people (
 # Their last names must exactly be “Person 1”, “Person 2”, etc.
 # Other fields are for you to assign.
 
-insert into people (people_id,people_last_name) values (1,'Person 1');
+insert into people (people_id,people_last_name,date_joined) values 
+(1,'Person 1','10/21/01'),
+(2,'Person 2','01/13/04'),
+(3,'Person 3','05/22/05'),
+(4,'Person 4','03/12/03'),
+(5,'Person 5','02/11/05'),
+(6,'Person 6','11/17/02'),
+(7,'Person 7','12/25/01'),
+(8,'Person 8','09/29/01'),
+(9,'Person 9','11/30/03'),
+(10,'Person 10','06/05/08');
+
+
 
 
 # Section 6
 # Create peopleskills( id, skills_id, people_id, date_acquired )
 # None of the fields can ba NULL. ID can be auto_increment.
 
+create table peopleskills (
+    id int auto_increment,
+    skills_id int,
+    people_id int,
+    date_acquired date default (current_date),
+    primary key (id),
+    foreign key (skills_id) references skills (skills_id),
+    foreign key (people_id) references people (people_id),
+    unique (skills_id,people_id)
+);
 
 # Section 7
 # Populate peopleskills such that:
@@ -72,25 +128,92 @@ insert into people (people_id,people_last_name) values (1,'Person 1');
 # Person 9 has skills 2,5,6;
 # Person 10 has skills 1,4,5;
 # Note that no one has yet acquired skills 7 and 8.
- 
+
+insert into peopleskills (people_id,skills_id) values
+(1,1),
+(1,3),
+(1,6),
+(2,3),
+(2,4),
+(2,5),
+(3,1),
+(3,5),
+(5,3),
+(5,6),
+(6,2),
+(6,3),
+(6,4),
+(7,3),
+(7,5),
+(7,6),
+(8,1),
+(8,3),
+(8,5),
+(8,6),
+(9,2),
+(9,5),
+(9,6),
+(10,1),
+(10,4),
+(10,5);
+
+SELECT
+people_last_name
+from
+people a
+ LEFT JOIN peopleskills b ON (a.people_id=b.people_id)
+ WHERE
+ b.people_id is null
+ ;
+
+ SELECT
+ people_last_name,
+ skills_name,
+ skills_tag
+ from
+ peopleskills a
+ INNER JOIN people b ON (a.people_id=b.people_id)
+ INNER JOIN skills c ON (a.skills_id=c.skills_id)
+ ORDER BY
+ people_last_name
+ ;
 
 # Section 8
 # Create roles( id, name, sort_priority )
 # sort_priority is an integer and is used to provide an order for sorting roles
 
-
+create table roles(
+    roles_id int,
+    roles_name varchar(255),
+    sort_priority int,
+    primary key(roles_id)
+);
 
 # Section 9
 # Populate roles
 # Designer, Developer, Recruit, Team Lead, Boss, Mentor
 # Sort priority is assigned numerically in the order listed above (Designer=10, Developer=20, Recruit=30, etc.)
 
+insert into roles (roles_id,roles_name,sort_priority) values
+(1,'Designer',10),
+(2,'Developer',20),
+(3,'Recruit',30),
+(4,'Team Lead',40),
+(5,'Boss',50),
+(6,'Mentor',60);
 
 
 # Section 10
 # Create peopleroles( id, people_id, role_id, date_assigned )
 # None of the fields can be null.  ID can be auto_increment
 
+create table peopleroles (
+    peopleroles_id int auto_increment,
+    people_id int not null,
+    roles_id int not null,
+    date_assigned varchar(255) not null,
+    primary key (peopleroles_id)
+);
 
 
 # Section 11
@@ -106,3 +229,22 @@ insert into people (people_id,people_last_name) values (1,'Person 1');
 # Person 9 is Developer
 # Person 10 is Developer and Designer
 
+insert into peopleroles (people_id, roles_id, date_assigned)
+values
+
+
+    (1, 2, '01/01/01'),
+    (2, 5, '03/02/02'),
+    (2, 6, '04/03/02'),
+    (3, 2, '10/04/03'),
+    (3, 4, '11/05/03'),
+    (4, 3, '12/06/04'),
+    (5, 3, '01/07/05'),
+    (6, 2, '04/08/06'),
+    (6, 1, '05/09/06'),
+    (7, 1, '04/10/07'),
+    (8, 1, '06/11/08'),
+    (8, 4, '10/12/08'),
+    (9, 2, '11/12/09'),
+    (10, 2, '09/10/10'),
+    (10, 1, '04/11/10');
