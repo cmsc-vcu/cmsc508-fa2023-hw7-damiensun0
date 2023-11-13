@@ -94,20 +94,30 @@ In this project we are creating a database that will serve as a comprehensive co
 
 ## Crows-foot diagram
 
-This is a crows-foot diagram.  It illustrates the relationships between entities in a database using symbols, including a "crow's foot" to indicate cardinality. In this case it shows the relationships between customers, orders, and delivery addresses. we can also see that the customer contains a first name and last name while the address has an id.
+This is a crows-foot diagram.  It illustrates the relationships between entities in a database using symbols, including a "crow's foot" to indicate cardinality. In this case it shows the relationships between people and their roles and skills.
 
 ```{mermaid}
 %%| echo: false
 erDiagram
-    CUSTOMER ||--o{ ORDER : places
-    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
-    CUSTOMER{
-        int id
-        string first_name
+    PEOPLE ||--o{ ROLES : has
+    PEOPLE }|..|{ SKILLS : has
+    PEOPLE{
+        int people_id
         string last_name
+        string email
+        string linkedin
+        string headshot
+        string discord
+        string bio
+        string date_joined
     }
-    DELIVERY-ADDRESS {
-        int id
+    ROLES {
+        int ROLES_id
+        string date_assigned
+    }
+    SKILLS {
+        int SKILLS_id
+        string SKILLS_name
     }
 ```
 
@@ -445,5 +455,5 @@ df
 ## Reflection
 
 
-I thought for the most part that this assignment was extremely good for me. I am thankful for all the guidance from professor Leonard in his lectures, it really helped with the assignment. At first, creating the queries was very exciting, but as I kept going I somehow got lost in my code and got confused. Everything got really redundant in my opinion as I kept making the queries but it did serve as good practice. Overall, I think this assignment was great. It wasn't too difficult but it was a bit time consuming, I am definitely glad I started on it a bit earlier than usual to give me time to complete it. 
+I thought for the most part that this assignment was extremely good for me. I am thankful for all the guidance from professor Leonard in his lectures, it really helped with the assignment. At first, creating the queries was very exciting, but as I kept going I somehow got lost in my code and got confused. Everything got really redundant in my opinion as I kept making the queries but it did serve as good practice. Overall, I think this assignment was great. It wasn't too difficult but it was a bit time consuming, I am definitely glad I started on it a bit earlier than usual to give me time to complete it.
 
